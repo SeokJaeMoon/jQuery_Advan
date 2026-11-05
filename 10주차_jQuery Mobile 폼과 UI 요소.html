@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery Mobile 폼과 UI 요소 15장 인포그래픽</title>
+  <link rel="stylesheet" href="https://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css">
+  <script src="https://code.jquery.com/jquery-1.6.4.min.js"></script>
+  <script src="https://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
+  <style>
+    :root {
+      --ink: #203149;
+      --muted: #60728a;
+      --line: #dce6ef;
+      --blue: #276eb1;
+      --blue2: #4489c7;
+      --teal: #308884;
+      --mint: #e6f5f0;
+      --cream: #fff7e8;
+      --lav: #f1ecff;
+      --bg: #eff3f7;
+      --deep: #172e4b;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100%;
+      height: 100%;
+      overflow: hidden !important;
+      background: var(--bg) !important;
+      font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif !important;
+      color: var(--ink) !important
+    }
+
+    #lecturePage {
+      height: 100vh !important;
+      min-height: 0 !important;
+      background: var(--bg) !important;
+      overflow: hidden !important;
+      display: grid !important;
+      grid-template-columns: 235px minmax(0, 1fr);
+      text-shadow: none !important
+    }
+
+    #lecturePage .sidebar {
+      background: #fbfdff;
+      border-right: 1px solid var(--line);
+      padding: 23px 13px 14px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      box-shadow: 2px 0 15px #243a520a
+    }
+
+    .sidebar .brand {
+      padding: 0 12px 18px;
+      border-bottom: 1px solid #e2eaf0;
+      display: flex;
+      align-items: center;
+      gap: 11px
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      background: #347cb2;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 21px;
+      font-weight: 900;
+      box-shadow: 0 6px 12px #2978b62e
+    }
+
+    .brand small {
+      display: block;
+      color: #7186a0;
+      font-size: 10px;
+      letter-spacing: 1.4px;
+      font-weight: 800
+    }
+
+    .brand b {
+      display: block;
+      color: #234363;
+      font-size: 17px;
+      margin-top: 3px
+    }
+
+    .nav-scroll {
+      overflow-y: auto;
+      flex: 1;
+      padding: 13px 2px 8px
+    }
+
+    .nav-group-title {
+      margin: 12px 12px 7px;
+      font-size: 10px;
+      color: #8495a6;
+      font-weight: 900;
+      letter-spacing: 1.4px
+    }
+
+    .sidebar .jump {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: #536579 !important;
+      text-decoration: none !important;
+      padding: 9px 11px;
+      margin-bottom: 3px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.28;
+      text-shadow: none !important;
+      transition: background .15s
+    }
+
+    .sidebar .jump:hover {
+      background: #e9f3fb
+    }
+
+    .sidebar .jump.active {
+      color: #1764a5 !important;
+      background: #e3f0fc
+    }
+
+    .sidebar .jump .n {
+      width: 19px;
+      color: #94a5b5;
+      font-size: 10px;
+      font-variant-numeric: tabular-nums
+    }
+
+    .sidebar .jump.active .n {
+      color: #2375ba
+    }
+
+    .side-foot {
+      padding: 14px 9px 2px;
+      border-top: 1px solid #e2eaf0;
+      color: #8c9bab;
+      font-size: 10px;
+      line-height: 1.8
+    }
+
+    .workspace {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 20px 24px 14px;
+      background: radial-gradient(ellipse at 90% 10%, #e9f5f0 0%, transparent 38%), radial-gradient(ellipse at 10% 90%, #e9efff 0%, transparent 35%), #eff3f7
+    }
+
+    .stage-frame {
+      width: 1280px;
+      height: 720px;
+      flex: none;
+      position: relative
+    }
+
+    .deck {
+      width: 1280px;
+      height: 720px;
+      background: #fff;
+      overflow: hidden;
+      border-radius: 19px;
+      box-shadow: 0 30px 75px #2944632a, 0 3px 10px #35507017;
+      transform-origin: 0 0;
+      position: absolute;
+      left: 0;
+      top: 0;
+      isolation: isolate
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #fcfeff, #f9fbff);
+      padding: 37px 49px 36px;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(15px);
+      transition: opacity .19s ease, transform .19s ease;
+      overflow: hidden
+    }
+
+    .slide.active {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+      z-index: 2
+    }
+
+    .slide::after {
+      content: "";
+      position: absolute;
+      right: -170px;
+      top: -205px;
+      width: 470px;
+      height: 470px;
+      background: radial-gradient(circle, #d6edff75, transparent 70%);
+      pointer-events: none
+    }
+
+    .slide.mint-slide::after {
+      background: radial-gradient(circle, #dcf6e98f, transparent 70%)
+    }
+
+    .slide.purple-slide::after {
+      background: radial-gradient(circle, #e8e0ff8f, transparent 70%)
+    }
+
+    .slide.cream-slide::after {
+      background: radial-gradient(circle, #fff0d88a, transparent 70%)
+    }
+
+    .slide-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 1
+    }
+
+    .micro {
+      font-size: 13px !important;
+      color: #2a7baf !important;
+      letter-spacing: 2px;
+      font-weight: 900 !important;
+      text-transform: uppercase
+    }
+
+    .slide-count {
+      font-size: 13px !important;
+      color: #879cb0 !important;
+      font-weight: 800 !important;
+      letter-spacing: 1px
+    }
+
+    .slide h1,
+    .slide h2,
+    .slide h3,
+    .slide h4,
+    .slide p,
+    .slide li,
+    .slide label,
+    .slide strong,
+    .slide span {
+      font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif;
+      text-shadow: none
+    }
+
+    .slide h2 {
+      font-size: 40px;
+      line-height: 1.22;
+      margin: 17px 0 8px;
+      color: #1f344e;
+      letter-spacing: -1.4px
+    }
+
+    .slide .lead {
+      font-size: 19px;
+      color: #62758b;
+      margin: 0 0 19px;
+      line-height: 1.48
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 23px;
+      height: 507px;
+      position: relative;
+      z-index: 1
+    }
+
+    .columns.wide-left {
+      grid-template-columns: 1.13fr .87fr
+    }
+
+    .columns.wide-right {
+      grid-template-columns: .89fr 1.11fr
+    }
+
+    .paper {
+      background: #fff;
+      border: 1px solid #e1e9f0;
+      border-radius: 19px;
+      padding: 23px 25px;
+      box-shadow: 0 9px 24px #2c496c08;
+      position: relative;
+      min-width: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      scrollbar-width: thin
+    }
+
+    .paper.pale-blue {
+      background: #f2f8ff;
+      border-color: #dcecfb
+    }
+
+    .paper.pale-mint {
+      background: #eefaf7;
+      border-color: #daefe7
+    }
+
+    .paper.pale-cream {
+      background: #fffaf0;
+      border-color: #f1e7cf
+    }
+
+    .paper.pale-violet {
+      background: #f7f3ff;
+      border-color: #e8dfff
+    }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      color: #497da4;
+      font-weight: 900;
+      margin: 0 0 13px
+    }
+
+    .paper h3 {
+      font-size: 26px;
+      color: #203a55;
+      margin: 0 0 13px;
+      letter-spacing: -.6px
+    }
+
+    .paper p {
+      font-size: 17px;
+      line-height: 1.58;
+      color: #64778a;
+      margin: 8px 0 14px
+    }
+
+    .paper ul {
+      margin: 8px 0 0;
+      padding-left: 23px
+    }
+
+    .paper li {
+      font-size: 17px;
+      line-height: 1.62;
+      color: #465e74;
+      margin-bottom: 8px
+    }
+
+    .code-label {
+      font-size: 12px;
+      color: #8095a9;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      margin: 16px 0 9px
+    }
+
+    .codebox {
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+      background: #1e314a;
+      color: #d6edff;
+      padding: 18px 19px;
+      border: 1px solid #263c55;
+      border-radius: 13px;
+      font: 17px/1.52 Consolas, Menlo, monospace;
+      text-align: left;
+      text-shadow: none;
+      overflow: hidden
+    }
+
+    .codebox.small {
+      font-size: 16px;
+      line-height: 1.52
+    }
+
+    .codebox.xsmall {
+      font-size: 14px;
+      line-height: 1.48
+    }
+
+    .note {
+      padding: 12px 15px;
+      border-radius: 10px;
+      background: #e7f2fd;
+      border-left: 4px solid #5295cf;
+      color: #365c81;
+      font-size: 15px;
+      line-height: 1.55;
+      margin-top: 15px
+    }
+
+    .note.green {
+      background: #e5f5ec;
+      border-color: #48aa86;
+      color: #327b69
+    }
+
+    .note.amber {
+      background: #fff3dc;
+      border-color: #e8af51;
+      color: #8b672d
+    }
+
+    .demo-title {
+      font-size: 14px;
+      font-weight: 900;
+      color: #56708c;
+      letter-spacing: 1.2px;
+      margin-bottom: 14px
+    }
+
+    .demo {
+      font-size: 18px;
+      color: #314966
+    }
+
+    .demo label {
+      font-size: 17px;
+      color: #2c465d;
+      font-weight: 800;
+      display: block;
+      margin-bottom: 8px
+    }
+
+    .demo .ui-controlgroup-label {
+      font-size: 17px
+    }
+
+    .demo .ui-field-contain {
+      border: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important
+    }
+
+    .demo .ui-controlgroup {
+      margin: 0 0 18px !important
+    }
+
+    .demo .ui-select,
+    .demo .ui-slider {
+      max-width: 100%;
+    }
+
+    .demo input[type=text],
+    .demo input[type=search] {
+      font-size: 18px !important
+    }
+
+    .demo-result {
+      margin-top: 19px;
+      padding: 15px 16px;
+      background: #e8f4ff;
+      border: 1px solid #d0e6f9;
+      border-radius: 12px;
+      min-height: 52px;
+      font-size: 18px;
+      font-weight: 800;
+      color: #235983;
+      line-height: 1.5;
+      overflow-wrap: anywhere
+    }
+
+    .small-caption {
+      font-size: 14px;
+      color: #7b8da0;
+      line-height: 1.5;
+      margin-top: 10px
+    }
+
+    .bubble {
+      border-radius: 14px;
+      background: #ecf4fb;
+      padding: 16px;
+      color: #2a5882;
+      font-size: 17px;
+      font-weight: 800
+    }
+
+    .btn-mini,
+    .slide .btn-mini {
+      display: inline-block;
+      border: 0 !important;
+      border-radius: 11px !important;
+      background: #276fae !important;
+      color: #fff !important;
+      font: 800 16px 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif !important;
+      padding: 12px 17px !important;
+      text-decoration: none !important;
+      text-shadow: none !important;
+      cursor: pointer;
+      box-shadow: none !important;
+      margin: 8px 5px 8px 0;
+      line-height: 1.3 !important
+    }
+
+    .btn-mini.alt {
+      background: #e7f2fb !important;
+      color: #28618f !important
+    }
+
+    .btn-mini.dark {
+      background: #193c5c !important
+    }
+
+    .btn-mini.soft {
+      background: #e8f5ee !important;
+      color: #24785d !important
+    }
+
+    .ghost-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 11px;
+      margin-top: 12px
+    }
+
+    .ghost-grid .x {
+      height: 101px;
+      border: 2px solid #cbdff0;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #f1f8ff;
+      font-size: 18px;
+      font-weight: 850;
+      color: #2e638d;
+      gap: 11px
+    }
+
+    .ghost-grid .x b {
+      font-size: 29px
+    }
+
+    .form-out {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+      margin-top: 8px
+    }
+
+    .form-out .item {
+      background: #f0f5fa;
+      border-radius: 11px;
+      padding: 15px
+    }
+
+    .form-out .item small {
+      display: block;
+      color: #7d93a7;
+      font-size: 13px;
+      margin-bottom: 6px
+    }
+
+    .form-out .item b {
+      font-size: 20px;
+      color: #244e77
+    }
+
+    .step-flow {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 18px 0 21px
+    }
+
+    .flow-box {
+      border-radius: 17px;
+      padding: 17px 10px;
+      flex: 1;
+      background: #e8f2fc;
+      border: 1px solid #cfe4f6;
+      text-align: center;
+      min-height: 130px
+    }
+
+    .flow-box .symbol {
+      display: block;
+      font-size: 35px;
+      font-weight: 900;
+      color: #367da7;
+      margin-bottom: 8px
+    }
+
+    .flow-box b {
+      font-size: 21px;
+      color: #214a70
+    }
+
+    .flow-box p {
+      font-size: 14px;
+      margin: 5px 0
+    }
+
+    .arr {
+      font-size: 31px;
+      color: #b6c9d8;
+      font-weight: 900
+    }
+
+    .two-feature {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px
+    }
+
+    .two-feature>div {
+      padding: 20px;
+      border-radius: 14px;
+      background: #f2f7fc;
+      min-height: 145px
+    }
+
+    .two-feature b {
+      display: block;
+      font-size: 19px;
+      color: #335b80
+    }
+
+    .two-feature p {
+      font-size: 16px
+    }
+
+    .phone {
+      position: relative;
+      width: 310px;
+      height: 367px;
+      border: 9px solid #233951;
+      border-radius: 33px;
+      background: #fdfefe;
+      box-shadow: 0 17px 30px #172c4320;
+      overflow: hidden;
+      margin: auto
+    }
+
+    .phone-bar {
+      height: 43px;
+      background: #2e689d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 850
+    }
+
+    .phone-inner {
+      padding: 18px;
+      font-size: 17px;
+      line-height: 1.55
+    }
+
+    .phone-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 43px;
+      background: #eef3f8;
+      border-top: 1px solid #d7e2ef;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      color: #6883a0;
+      font-size: 13px;
+      font-weight: 800
+    }
+
+    #panelVeil {
+      display: none;
+      position: absolute;
+      inset: 43px 0 43px;
+      background: #192a3f67;
+      z-index: 8
+    }
+
+    #demoSidePanel {
+      position: absolute;
+      top: 43px;
+      bottom: 43px;
+      left: -220px;
+      width: 213px;
+      background: #edf7ff;
+      z-index: 9;
+      box-shadow: 5px 0 18px #1f3f5a33;
+      padding: 15px 11px;
+      transition: left .27s ease
+    }
+
+    #demoSidePanel.open {
+      left: 0
+    }
+
+    #demoSidePanel .panel-entry {
+      background: white;
+      border: 1px solid #d6e6f2;
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #345877;
+      font-size: 15px;
+      margin-bottom: 8px
+    }
+
+    .popup-layer {
+      display: none;
+      position: absolute;
+      inset: 43px 0 43px;
+      background: #13243e7d;
+      z-index: 12;
+      align-items: center;
+      justify-content: center
+    }
+
+    .popup-layer.show {
+      display: flex
+    }
+
+    .popup-window {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 245px;
+      background: #fff;
+      border-radius: 17px;
+      padding: 22px 13px;
+      text-align: center;
+      box-shadow: 0 10px 20px #14283a4a
+    }
+
+    .popup-window h4 {
+      font-size: 22px;
+      color: #244c70;
+      margin: 6px 0
+    }
+
+    .popup-window p {
+      font-size: 15px;
+      line-height: 1.5;
+      color: #6e8295
+    }
+
+    .table-demo {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 16px
+    }
+
+    .table-demo th,
+    .table-demo td {
+      border: 1px solid #d4e0eb;
+      text-align: left;
+      padding: 12px 9px
+    }
+
+    .table-demo th {
+      background: #e8f3fd;
+      color: #2d557b
+    }
+
+    .table-demo td {
+      color: #4e6b86
+    }
+
+    .table-proxy {
+      background: #f6fafd;
+      padding: 12px;
+      border: 1px solid #dae8f4;
+      border-radius: 14px;
+      min-height: 244px;
+      transition: all .2s
+    }
+
+    .table-proxy.narrow {
+      max-width: 278px;
+      margin: auto
+    }
+
+    .table-proxy.narrow .table-demo,
+    .table-proxy.narrow .table-demo tbody,
+    .table-proxy.narrow .table-demo tr,
+    .table-proxy.narrow .table-demo td {
+      display: block;
+      width: 100%
+    }
+
+    .table-proxy.narrow .table-demo thead {
+      display: none
+    }
+
+    .table-proxy.narrow .table-demo tr {
+      background: white;
+      margin-bottom: 9px;
+      border: 1px solid #d6e6f2;
+      border-radius: 9px;
+      overflow: hidden
+    }
+
+    .table-proxy.narrow .table-demo td {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      border: 0;
+      border-bottom: 1px solid #e3edf6;
+      padding: 7px 10px;
+      font-size: 14px
+    }
+
+    .table-proxy.narrow .table-demo td:before {
+      content: attr(data-label);
+      color: #37698e;
+      font-weight: 900
+    }
+
+    .live-grids>div {
+      display: none;
+      margin-top: 20px
+    }
+
+    .live-grids>div.show {
+      display: block
+    }
+
+    .live-grids [class^='ui-block-'] {
+      float: left
+    }
+
+    .grid-cell {
+      margin: 4px !important;
+      border: 1px solid #c7e2f5;
+      border-radius: 11px;
+      background: linear-gradient(180deg, #e8f4ff, #d7eaf9);
+      color: #2b6b9d;
+      text-align: center;
+      padding: 24px 0;
+      font: 900 27px Arial !important;
+      text-shadow: none !important
+    }
+
+    .grid-btn.active {
+      background: #2678b4 !important;
+      color: #fff !important
+    }
+
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 18px;
+      margin-top: 5px
+    }
+
+    .matrix th {
+      background: #e7f1fb;
+      color: #275d89;
+      padding: 14px 12px;
+      text-align: left
+    }
+
+    .matrix td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #e3edf4;
+      color: #49617a
+    }
+
+    .matrix tr:last-child td {
+      border: 0
+    }
+
+    .matrix .yes {
+      color: #168469;
+      font-weight: 900
+    }
+
+    .matrix .no {
+      color: #a56b28;
+      font-weight: 900
+    }
+
+    .inline-code {
+      font: 700 14px Consolas, Menlo, monospace;
+      color: #326e9b;
+      background: #edf4fb;
+      border-radius: 5px;
+      padding: 3px 5px
+    }
+
+    .banner {
+      border-radius: 17px;
+      padding: 18px 24px;
+      background: #e9f5ff;
+      color: #266491;
+      font-size: 19px;
+      font-weight: 800
+    }
+
+    .split-hero {
+      display: grid;
+      grid-template-columns: 1.18fr .82fr;
+      gap: 50px;
+      align-items: center;
+      height: 565px
+    }
+
+    .hero-kicker {
+      font-size: 18px;
+      color: #367bad;
+      letter-spacing: 3px;
+      font-weight: 900
+    }
+
+    .hero-title {
+      font-size: 65px !important;
+      letter-spacing: -3px !important;
+      line-height: 1.13 !important;
+      color: #193753 !important;
+      margin: 24px 0 25px !important
+    }
+
+    .hero-sub {
+      font-size: 23px !important;
+      color: #667f95 !important;
+      line-height: 1.65 !important
+    }
+
+    .hero-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 31px
+    }
+
+    .hero-pill {
+      padding: 12px 17px;
+      border-radius: 50px;
+      border: 1px solid #d6e5f4;
+      background: #ecf6ff;
+      color: #2c6794;
+      font-size: 16px;
+      font-weight: 800
+    }
+
+    .hero-illustration {
+      position: relative;
+      height: 470px;
+      display: grid;
+      place-items: center
+    }
+
+    .orb {
+      position: absolute;
+      width: 430px;
+      height: 430px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 20% 20%, #d5f5e8, #d6e8fe 65%, #eee6ff);
+      opacity: .72;
+      box-shadow: inset -14px -20px 45px #a6c8ee55
+    }
+
+    .hero-phone {
+      height: 410px;
+      width: 270px;
+      border: 13px solid #23425e;
+      border-radius: 40px;
+      background: #fff;
+      position: relative;
+      transform: rotate(7deg);
+      box-shadow: 20px 18px 35px #2e61852a;
+      z-index: 1;
+      overflow: hidden
+    }
+
+    .hero-phone:before {
+      content: '';
+      display: block;
+      background: #dbeeff;
+      height: 48px
+    }
+
+    .hero-phone .tiny {
+      background: #eef5fa;
+      border-radius: 10px;
+      margin: 16px 18px;
+      height: 40px
+    }
+
+    .hero-phone .tiny:nth-child(2) {
+      background: #dfefe8;
+      height: 72px
+    }
+
+    .hero-phone .tiny:nth-child(3) {
+      background: #efeaf9;
+      height: 55px
+    }
+
+    .hero-floating {
+      position: absolute;
+      z-index: 3;
+      background: #fff;
+      padding: 14px 18px;
+      border-radius: 13px;
+      border: 1px solid #d9e9f3;
+      box-shadow: 0 9px 22px #45648f20;
+      font-size: 15px;
+      color: #336b91;
+      font-weight: 900
+    }
+
+    .hero-floating.one {
+      left: 2px;
+      top: 87px;
+      transform: rotate(-7deg)
+    }
+
+    .hero-floating.two {
+      right: 0;
+      bottom: 79px;
+      transform: rotate(5deg)
+    }
+
+    .controlbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1180px;
+      gap: 20px
+    }
+
+    .progress {
+      flex: 1;
+      height: 7px;
+      border-radius: 7px;
+      background: #dce6ef;
+      overflow: hidden
+    }
+
+    .progress span {
+      display: block;
+      width: 7%;
+      height: 100%;
+      background: #397eae;
+      border-radius: 7px;
+      transition: width .25s
+    }
+
+    .controlbar .leftnote {
+      font: 800 12px Arial;
+      color: #7c90a5;
+      letter-spacing: 1px;
+      width: 72px
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .controls button {
+      border: 1px solid #d4e1ec;
+      border-radius: 10px;
+      background: #fff;
+      color: #55718a;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 10px 13px;
+      cursor: pointer;
+      text-shadow: none
+    }
+
+    .controls button:hover {
+      background: #eaf3fa
+    }
+
+    .controls button:disabled {
+      opacity: .35;
+      cursor: default
+    }
+
+    #slideCounter {
+      color: #467ba6;
+      font-size: 12px;
+      font-weight: 900
+    }
+
+    .quiz-item {
+      border-radius: 12px;
+      padding: 13px 15px;
+      background: #f3f8fd;
+      border: 1px solid #deebf5;
+      margin-bottom: 11px
+    }
+
+    .quiz-q {
+      font-weight: 900;
+      font-size: 19px;
+      color: #2a567d;
+      margin: 0 0 5px !important
+    }
+
+    .quiz-answer {
+      display: none;
+      font-size: 17px;
+      color: #376a82;
+      line-height: 1.5;
+      margin: 7px 0 0 !important
+    }
+
+    .quiz-answer.visible {
+      display: block
+    }
+
+    @media(max-width:1050px) {
+      #lecturePage {
+        grid-template-columns: 0 minmax(0, 1fr)
+      }
+
+      .sidebar {
+        display: none !important
+      }
+
+      .workspace {
+        padding: 9px 6px
+      }
+    }
+
+    @media print {
+      @page {
+        size: landscape;
+        margin: 0
+      }
+
+      html,
+      body {
+        overflow: visible !important;
+        height: auto !important;
+        background: white !important
+      }
+
+      #lecturePage {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important
+      }
+
+      .sidebar,
+      .controlbar {
+        display: none !important
+      }
+
+      .workspace {
+        display: block !important;
+        padding: 0 !important;
+        height: auto !important
+      }
+
+      .stage-frame {
+        width: 1280px !important;
+        height: auto !important
+      }
+
+      .deck {
+        position: static !important;
+        transform: none !important;
+        overflow: visible !important;
+        width: 1280px !important;
+        height: auto !important;
+        box-shadow: none !important;
+        border-radius: 0 !important
+      }
+
+      .slide {
+        position: relative !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        transform: none !important;
+        pointer-events: auto !important;
+        width: 1280px !important;
+        height: 720px !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        box-shadow: none !important
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div data-role="page" id="lecturePage" data-theme="c">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">jQ</div>
+        <div><small>MOBILE WEB APP</small><b>jQuery UI 강의</b></div>
+      </div>
+      <div class="nav-scroll">
+        <div class="nav-group-title">INTRO</div><a href="#slide1" data-role="none" class="jump active"
+          data-jump="0"><span class="n">01</span><span>강의 소개</span></a><a href="#slide2" data-role="none" class="jump "
+          data-jump="1"><span class="n">02</span><span>모바일 UI 구조</span></a>
+        <div class="nav-group-title">FORM ELEMENTS</div><a href="#slide3" data-role="none" class="jump "
+          data-jump="2"><span class="n">03</span><span>라디오·체크박스</span></a><a href="#slide4" data-role="none"
+          class="jump " data-jump="3"><span class="n">04</span><span>셀렉트 메뉴</span></a><a href="#slide5" data-role="none"
+          class="jump " data-jump="4"><span class="n">05</span><span>플립 스위치</span></a><a href="#slide6" data-role="none"
+          class="jump " data-jump="5"><span class="n">06</span><span>숫자 슬라이더</span></a><a href="#slide7"
+          data-role="none" class="jump " data-jump="6"><span class="n">07</span><span>텍스트·검색</span></a>
+        <div class="nav-group-title">UI COMPONENTS</div><a href="#slide8" data-role="none" class="jump "
+          data-jump="7"><span class="n">08</span><span>사이드 패널</span></a><a href="#slide9" data-role="none" class="jump "
+          data-jump="8"><span class="n">09</span><span>아코디언</span></a><a href="#slide10" data-role="none" class="jump "
+          data-jump="9"><span class="n">10</span><span>팝업</span></a><a href="#slide11" data-role="none" class="jump "
+          data-jump="10"><span class="n">11</span><span>반응형 테이블</span></a><a href="#slide12" data-role="none"
+          class="jump " data-jump="11"><span class="n">12</span><span>그리드</span></a>
+        <div class="nav-group-title">WRAP UP</div>
+          <a href="#slide13" data-role="none" class="jump " data-jump="12">
+            <span class="n">13</span>
+            <span>버전 호환성</span>
+          </a>                
+      </div>
+      <div class="side-foot">기준: jQuery 1.6.4 / jQuery Mobile 1.0<br>학습용 · 외부 CDN 로드 시 인터넷 필요</div>
+    </aside>
+    <main class="workspace" id="workspace">
+      <div id="stageFrame" class="stage-frame">
+        <div class="deck" id="deck">
+          <section class="slide active" id="slide1" data-index="0" aria-label="표지">
+            <div class="slide-head">
+              <div class="micro">MOBILE WEB APP · LECTURE 01</div>
+              <div class="slide-count">01 / 13</div>
+            </div>
+            <div class="split-hero">
+              <div>
+                <div class="hero-kicker">대학 모바일 웹앱 프로그래밍</div>
+                <h1 class="hero-title">jQuery Mobile<br>폼과 UI 구성 요소</h1>
+                <p class="hero-sub">폼 요소 5종 + 인터페이스 5종<br>개념부터 코드, 실행 결과까지 한 화면에서 학습</p>
+                <div class="hero-pills"><span class="hero-pill">jQuery 1.6.4</span><span class="hero-pill">jQuery Mobile
+                    1.0</span><span class="hero-pill">HTML5 실습</span></div>
+              </div>
+              <div class="hero-illustration">
+                <div class="orb"></div>
+                <div class="hero-phone">
+                  <div class="tiny"></div>
+                  <div class="tiny"></div>
+                  <div class="tiny"></div>
+                  <div class="tiny"></div>
+                </div>
+                <div class="hero-floating one">☑ FORM UI · 5개</div>
+                <div class="hero-floating two">▤ COMPONENT · 5개</div>
+              </div>
+            </div>
+          </section>
+          <section class="slide " id="slide2" data-index="1" aria-label="HTML이 모바일 UI가 되는 과정">
+            <div class="slide-head">
+              <div class="micro">01 · 기본 구조</div>
+              <div class="slide-count">02 / 13</div>
+            </div>
+            <h2>HTML이 모바일 UI가 되는 과정</h2>
+            <p class="lead">HTML 태그와 data-role 속성을 jQuery Mobile이 읽고 터치 친화적인 위젯으로 변환합니다.</p>
+
+            <div class="columns wide-left">
+              <div class="paper">
+                <div class="section-tag">동작 원리 · 그림 1</div>
+                <div class="step-flow">
+                  <div class="flow-box"><span class="symbol">&lt;/&gt;</span><b>HTML</b>
+                    <p>표준 요소</p>
+                  </div><span class="arr">→</span>
+                  <div class="flow-box"><span class="symbol">◈</span><b>jQuery</b>
+                    <p>DOM / 이벤트</p>
+                  </div><span class="arr">→</span>
+                  <div class="flow-box"><span class="symbol">▣</span><b>Mobile UI</b>
+                    <p>자동 꾸밈</p>
+                  </div>
+                </div>
+                <div class="note"><b>핵심:</b> data-role은 UI 컴포넌트의 역할을 선언한다. 폼 입력값 자체는 표준 HTML이 관리한다.</div>
+                <div class="code-label">기본 HTML 구조</div>
+                <pre class="codebox small">&lt;div data-role=&quot;page&quot;&gt;
+  &lt;div data-role=&quot;header&quot;&gt;제목&lt;/div&gt;
+  &lt;div data-role=&quot;content&quot;&gt;본문&lt;/div&gt;
+  &lt;div data-role=&quot;footer&quot;&gt;하단&lt;/div&gt;
+&lt;/div&gt;</pre>
+              </div>
+              <div class="paper pale-mint">
+                <div class="section-tag">이번 강의에서 할 일</div>
+                <h3>직접 클릭하고, 결과를 확인합니다</h3>
+                <div class="form-out">
+                  <div class="item"><small>폼 요소</small><b>5종</b></div>
+                  <div class="item"><small>UI 구성 요소</small><b>5종</b></div>
+                  <div class="item"><small>기본 1.0 지원</small><b>7종</b></div>
+                  <div class="item"><small>직접 대체 구현</small><b>3종</b></div>
+                </div>
+                <p style="margin-top:23px">하단의 <b>다음</b> 버튼 또는 키보드 <b>→</b> 키로 슬라이드를 넘길 수 있습니다.</p>
+              </div>
+            </div>
+          </section>
+          <section class="slide mint-slide" id="slide3" data-index="2" aria-label="라디오 버튼과 체크박스">
+            <div class="slide-head">
+              <div class="micro">02 · FORM ①</div>
+              <div class="slide-count">03 / 13</div>
+            </div>
+            <h2>라디오 버튼과 체크박스</h2>
+            <p class="lead">라디오는 단일 선택, 체크박스는 다중 선택에 사용합니다.</p>
+
+            <div class="columns">
+              <div class="paper">
+                <div class="section-tag">개념 + 코드</div>
+                <div class="two-feature">
+                  <div><b>◉ Radio</b>
+                    <p>같은 name을 공유하면 한 항목만 선택</p>
+                  </div>
+                  <div><b>☑ Checkbox</b>
+                    <p>여러 항목을 동시에 선택</p>
+                  </div>
+                </div>
+                <div class="code-label">기본 예제</div>
+                <pre class="codebox small">&lt;fieldset data-role=&quot;controlgroup&quot;&gt;
+  &lt;input type=&quot;radio&quot; name=&quot;course&quot; id=&quot;r1&quot;&gt;
+  &lt;label for=&quot;r1&quot;&gt;온라인&lt;/label&gt;
+&lt;/fieldset&gt;
+&lt;input type=&quot;checkbox&quot; id=&quot;c1&quot;&gt;
+&lt;label for=&quot;c1&quot;&gt;웹 개발&lt;/label&gt;</pre>
+                <div class="note">name이 동일한 라디오 그룹은 하나만 선택됩니다.</div>
+              </div>
+              <div class="paper pale-blue">
+                <div class="demo-title">LIVE DEMO · 직접 선택하세요</div>
+                <div class="demo">
+                  <fieldset data-role="controlgroup" data-type="horizontal">
+                    <legend>수강 형태</legend><input type="radio" name="courseDemo" id="courseD1" value="온라인" checked><label
+                      for="courseD1">온라인</label><input type="radio" name="courseDemo" id="courseD2" value="오프라인"><label
+                      for="courseD2">오프라인</label>
+                  </fieldset>
+                  <fieldset data-role="controlgroup">
+                    <legend>관심 분야 (복수 선택)</legend><input type="checkbox" class="interestDemo" id="interestD1"
+                      value="인공지능"><label for="interestD1">인공지능</label><input type="checkbox" class="interestDemo"
+                      id="interestD2" value="웹 개발"><label for="interestD2">웹 개발</label><input type="checkbox"
+                      class="interestDemo" id="interestD3" value="정보보호"><label for="interestD3">정보보호</label>
+                  </fieldset>
+                </div>
+                <div class="demo-result" id="choiceResult" role="status" aria-live="polite">온라인 · 관심 분야 미선택</div>
+              </div>
+            </div>
+          </section>
+          <section class="slide " id="slide4" data-index="3" aria-label="셀렉트 메뉴 · Select Menu">
+            <div class="slide-head">
+              <div class="micro">03 · FORM ②</div>
+              <div class="slide-count">04 / 13</div>
+            </div>
+            <h2>셀렉트 메뉴 · Select Menu</h2>
+            <p class="lead">옵션이 여러 개일 때 공간을 절약하며 하나를 선택하도록 만듭니다.</p>
+
+            <div class="columns">
+              <div class="paper">
+                <div class="section-tag">구현 원리</div>
+                <h3>select + option</h3>
+                <ul>
+                  <li><b>select</b>: 선택할 목록을 정의</li>
+                  <li><b>option</b>: 실제 선택 항목</li>
+                  <li><b>value</b>: 프로그램에서 사용할 값</li>
+                </ul>
+                <div class="code-label">기본 예제</div>
+                <pre class="codebox ">&lt;label for=&quot;major&quot;&gt;전공 선택&lt;/label&gt;
+&lt;select id=&quot;major&quot;&gt;
+  &lt;option value=&quot;AI&quot;&gt;인공지능학과&lt;/option&gt;
+  &lt;option value=&quot;SW&quot;&gt;소프트웨어학과&lt;/option&gt;
+  &lt;option value=&quot;SEC&quot;&gt;정보보호학과&lt;/option&gt;
+&lt;/select&gt;</pre>
+                <div class="note">jQuery Mobile 1.0이 일반 select를 자동으로 모바일형 메뉴로 꾸밉니다.</div>
+              </div>
+              <div class="paper pale-blue">
+                <div class="demo-title">LIVE DEMO · 학과를 선택하세요</div>
+                <div class="demo"><label for="majorSelect">전공 선택</label><select id="majorSelect">
+                    <option value="AI">인공지능학과</option>
+                    <option value="SW">소프트웨어학과</option>
+                    <option value="SEC">정보보호학과</option>
+                  </select></div>
+                <div class="demo-result" id="selectResult">선택 코드: AI</div>
+                <div style="margin-top:32px" class="bubble">선택 항목이 바뀌면 <b>change</b> 이벤트로 값을 읽습니다.</div>
+                <div class="code-label">jQuery 이벤트</div>
+                <pre class="codebox small">$(&quot;#majorSelect&quot;).bind(&quot;change&quot;, function(){
+  alert($(this).val());
+});</pre>
+              </div>
+            </div>
+          </section>
+          <section class="slide mint-slide" id="slide5" data-index="4" aria-label="플립 스위치 · Flip Switch">
+            <div class="slide-head">
+              <div class="micro">04 · FORM ③</div>
+              <div class="slide-count">05 / 13</div>
+            </div>
+            <h2>플립 스위치 · Flip Switch</h2>
+            <p class="lead">ON / OFF처럼 상태가 두 개인 설정 항목을 스마트폰 형태로 제공합니다.</p>
+
+            <div class="columns">
+              <div class="paper">
+                <div class="section-tag">구현 원리</div>
+                <h3>선택지 두 개로 표현</h3>
+                <p>jQuery Mobile 1.0에서는 <b>select</b>에 <span class="inline-code">data-role="slider"</span>를 지정합니다.</p>
+                <div class="code-label">기본 예제</div>
+                <pre class="codebox ">&lt;label for=&quot;wifi&quot;&gt;Wi-Fi 설정&lt;/label&gt;
+&lt;select id=&quot;wifi&quot; data-role=&quot;slider&quot;&gt;
+  &lt;option value=&quot;off&quot;&gt;OFF&lt;/option&gt;
+  &lt;option value=&quot;on&quot;&gt;ON&lt;/option&gt;
+&lt;/select&gt;</pre>
+                <div class="note green">이동 또는 터치로 ON/OFF를 바꿔 보세요.</div>
+              </div>
+              <div class="paper pale-mint">
+                <div class="demo-title">LIVE DEMO · 설정 변경</div>
+                <div class="demo"><label for="demoFlip">강의 알림 수신</label><select id="demoFlip" data-role="slider">
+                    <option value="OFF">OFF</option>
+                    <option value="ON">ON</option>
+                  </select></div>
+                <div class="demo-result" id="flipResult">강의 알림: OFF</div>
+                <div class="two-feature" style="margin-top:35px">
+                  <div><b>OFF</b>
+                    <p>알림을 받지 않음</p>
+                  </div>
+                  <div><b>ON</b>
+                    <p>알림 수신 활성화</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="slide cream-slide" id="slide6" data-index="5" aria-label="숫자 슬라이더 · Slider">
+            <div class="slide-head">
+              <div class="micro">05 · FORM ④</div>
+              <div class="slide-count">06 / 13</div>
+            </div>
+            <h2>숫자 슬라이더 · Slider</h2>
+            <p class="lead">min~max 범위 안에서 값을 조절하며 드래그에 따라 결과가 즉시 변합니다.</p>
+
+            <div class="columns">
+              <div class="paper">
+                <div class="section-tag">구현 원리</div>
+                <h3>type="range"</h3>
+                <div class="code-label">기본 예제</div>
+                <pre class="codebox ">&lt;label for=&quot;vol&quot;&gt;볼륨 조절&lt;/label&gt;
+&lt;input type=&quot;range&quot; id=&quot;vol&quot;
+       min=&quot;0&quot; max=&quot;100&quot; value=&quot;50&quot;&gt;</pre>
+                <ul style="margin-top:26px">
+                  <li><b>min</b>: 최소값</li>
+                  <li><b>max</b>: 최대값</li>
+                  <li><b>value</b>: 최초 설정값</li>
+                  <li><b>step</b>: 변경 간격 (생략 시 1)</li>
+                </ul>
+              </div>
+              <div class="paper pale-blue">
+                <div class="demo-title">LIVE DEMO · 슬라이더를 움직이세요</div>
+                <div class="demo"><label for="demoRange">현재 볼륨</label><input type="range" id="demoRange" min="0"
+                    max="100" value="50"></div>
+                <div style="text-align:center;margin:25px 0 0"><span id="rangeValue"
+                    style="font-size:86px;color:#286b9c;font-weight:900">50</span><span
+                    style="font-size:26px;color:#6a88a0"> / 100</span></div>
+                <div class="demo-result" id="rangeResult">현재 설정: 50%</div>
+              </div>
+            </div>
+          </section>
+          <section class="slide mint-slide" id="slide7" data-index="6" aria-label="텍스트 입력과 검색 폼">
+            <div class="slide-head">
+              <div class="micro">06 · FORM ⑤</div>
+              <div class="slide-count">07 / 13</div>
+            </div>
+            <h2>텍스트 입력과 검색 폼</h2>
+            <p class="lead">text는 일반 입력, search는 검색어 입력 및 검색 동작에 활용됩니다.</p>
+
+            <div class="columns">
+              <div class="paper">
+                <div class="section-tag">기본 코드</div>
+                <pre class="codebox ">&lt;label for=&quot;username&quot;&gt;이름&lt;/label&gt;
+&lt;input type=&quot;text&quot; id=&quot;username&quot;
+  placeholder=&quot;이름을 입력하세요&quot;&gt;
+
+&lt;label for=&quot;keyword&quot;&gt;검색어&lt;/label&gt;
+&lt;input type=&quot;search&quot; id=&quot;keyword&quot;
+  placeholder=&quot;검색어 입력&quot;&gt;</pre>
+                <div class="note">placeholder는 입력 전 안내 문구이며, 실제 데이터는 .val()로 읽습니다.</div>
+                <div class="code-label">값 읽기</div>
+                <pre class="codebox small">var name = $(&quot;#username&quot;).val();</pre>
+              </div>
+              <div class="paper pale-mint">
+                <div class="demo-title">LIVE DEMO · 키워드 필터링</div>
+                <div class="demo"><label for="personName">이름 입력</label><input type="text" id="personName"
+                    placeholder="예: 김학생"><label for="topicSearch" style="margin-top:13px">기술 검색</label><input
+                    type="search" id="topicSearch" placeholder="HTML, CSS, JavaScript 등"></div>
+                <div id="topicResults" class="demo-result">HTML5 · CSS3 · JavaScript · jQuery Mobile</div>
+                <div class="small-caption">검색어를 입력하면 아래 기술 이름 목록이 필터링됩니다.</div>
+              </div>
+            </div>
+          </section>
+          <section class="slide " id="slide8" data-index="7" aria-label="슬라이드 패널 · Panel">
+            <div class="slide-head">
+              <div class="micro">07 · UI ①</div>
+              <div class="slide-count">08 / 13</div>
+            </div>
+            <h2>슬라이드 패널 · Panel</h2>
+            <p class="lead">모바일 앱의 사이드 메뉴를 화면 밖에서 부드럽게 밀어 넣습니다.</p>
+
+            <div class="columns wide-left">
+              <div class="paper">
+                <div class="section-tag">버전 1.0 · 직접 구현</div>
+                <p><b>data-role="panel"</b>은 1.3부터 제공됩니다. 1.0에서는 CSS 위치와 jQuery 클릭 이벤트로 대체합니다.</p>
+                <div class="code-label">핵심 코드</div>
+                <pre class="codebox small">/* CSS */
+#sideMenu { left:-220px; position:absolute; }
+
+/* jQuery 1.6.4 */
+$(&quot;#open&quot;).bind(&quot;click&quot;, function(){
+  $(&quot;#sideMenu&quot;).animate({left:&quot;0px&quot;},300);
+});</pre>
+                <div class="note green">패널 열기 → 메뉴 선택 → 닫기 과정을 반복해 보세요.</div>
+              </div>
+              <div class="paper pale-blue">
+                <div class="demo-title">LIVE DEMO · 스마트폰 화면</div>
+                <div class="phone" id="panelPhone">
+                  <div class="phone-bar">메뉴 데모</div>
+                  <div class="phone-inner"><a href="#" class="btn-mini" id="panelOpen">☰ 메뉴 열기</a>
+                    <p>사이드 메뉴는 화면의 기본 공간을 차지하지 않으면서 이동 경로를 제공할 수 있습니다.</p>
+                    <p style="font-size:14px;color:#728ba0">오른쪽 스와이프: 열기<br>왼쪽 스와이프: 닫기</p>
+                  </div>
+                  <div class="phone-nav"><span>홈</span><span>강의</span><span>설정</span></div>
+                  <div id="panelVeil"></div>
+                  <div id="demoSidePanel">
+                    <div style="font-size:20px;font-weight:900;margin-bottom:13px;color:#21557c">실습 메뉴</div>
+                    <div class="panel-entry">⌂ 홈</div>
+                    <div class="panel-entry">▤ 강의</div>
+                    <div class="panel-entry">⚙ 설정</div><a href="#" class="btn-mini alt" id="panelClose">닫기</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="slide mint-slide" id="slide9" data-index="8" aria-label="접이식 아코디언 · Collapsible">
+            <div class="slide-head">
+              <div class="micro">08 · UI ②</div>
+              <div class="slide-count">09 / 13</div>
+            </div>
+            <h2>접이식 아코디언 · Collapsible</h2>
+            <p class="lead">제목을 클릭하면 아래의 내용을 펼치거나 접습니다. jQuery Mobile 1.0 기본 지원 기능입니다.</p>
+
+            <div class="columns">
+              <div class="paper">
+                <div class="section-tag">기본 속성</div>
+                <ul>
+                  <li><b>data-role="collapsible"</b>: 개별 접이식 콘텐츠</li>
+                  <li><b>data-role="collapsible-set"</b>: 아코디언 그룹</li>
+                  <li><b>data-collapsed="false"</b>: 처음 펼쳐진 상태</li>
+                </ul>
+                <div class="code-label">예제 코드</div>
+                <pre class="codebox small">&lt;div data-role=&quot;collapsible-set&quot;&gt;
+  &lt;div data-role=&quot;collapsible&quot;&gt;
+    &lt;h3&gt;HTML5&lt;/h3&gt;
+    &lt;p&gt;웹 구조 작성&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div data-role=&quot;collapsible&quot;&gt;
+    &lt;h3&gt;CSS3&lt;/h3&gt;
+    &lt;p&gt;디자인과 배치&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+              </div>
+              <div class="paper pale-mint">
+                <div class="demo-title">LIVE DEMO · 제목을 클릭하세요</div>
+                <div class="demo" style="margin-top:23px">
+                  <div data-role="collapsible-set" data-theme="c" data-content-theme="c">
+                    <div data-role="collapsible" data-collapsed="false">
+                      <h3>HTML5</h3>
+                      <p>제목·본문·폼의 구조를 정의합니다.</p>
+                    </div>
+                    <div data-role="collapsible">
+                      <h3>CSS3</h3>
+                      <p>레이아웃·폰트·반응형 디자인을 담당합니다.</p>
+                    </div>
+                    <div data-role="collapsible">
+                      <h3>JavaScript</h3>
+                      <p>클릭·터치·상태 변경을 처리합니다.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="note green">collapsible-set에서는 한 번에 하나의 영역만 열립니다.</div>
+              </div>
+            </div>
+          </section>
+          <section class="slide purple-slide" id="slide10" data-index="9" aria-label="중앙 팝업 · Popup">
+            <div class="slide-head">
+              <div class="micro">09 · UI ③</div>
+              <div class="slide-count">10 / 13</div>
+            </div>
+            <h2>중앙 팝업 · Popup</h2>
+            <p class="lead">대화상자와 오버레이를 사용해 사용자에게 정보를 강조합니다.</p>
+
+            <div class="columns wide-left">
+              <div class="paper">
+                <div class="section-tag">버전 1.0 · 직접 구현</div>
+                <p><b>data-role="popup"</b>은 1.2부터 사용 가능합니다. 1.0에서는 <b>fadeIn()</b>과 <b>fadeOut()</b>으로 대체합니다.</p>
+                <div class="code-label">예제 코드</div>
+                <pre class="codebox small">$(&quot;#openPopup&quot;).bind(&quot;click&quot;, function(e){
+  e.preventDefault();
+  $(&quot;#popupBox&quot;).fadeIn(180);
+});
+$(&quot;#closePopup&quot;).bind(&quot;click&quot;, function(e){
+  e.preventDefault();
+  $(&quot;#popupBox&quot;).fadeOut(180);
+});</pre>
+                <div class="note">실제 구현에서는 반투명 배경, 닫기 버튼, 키보드 Esc 처리를 함께 사용합니다.</div>
+              </div>
+              <div class="paper pale-violet">
+                <div class="demo-title">LIVE DEMO · 팝업 열기 / 닫기</div>
+                <div class="phone">
+                  <div class="phone-bar">알림 데모</div>
+                  <div class="phone-inner">
+                    <p>시스템에서 안내사항을 표시해야 할 때 팝업을 사용할 수 있습니다.</p><a href="#" class="btn-mini" id="popupOpen">팝업 열기</a>
+                  </div>
+                  <div class="phone-nav"><span>안내</span><span>알림</span><span>도움말</span></div>
+                  <div class="popup-layer" id="demoPopupLayer">
+                    <div class="popup-window" role="dialog" aria-modal="true" aria-label="실습 팝업">
+                      <h4>실습 알림</h4>
+                      <p>jQuery Mobile 1.0 환경의<br>사용자 정의 팝업입니다.</p><a href="#" class="btn-mini alt"
+                        id="popupClose">닫기</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="slide " id="slide11" data-index="10" aria-label="반응형 테이블 · Responsive Table">
+            <div class="slide-head">
+              <div class="micro">10 · UI ④</div>
+              <div class="slide-count">11 / 13</div>
+            </div>
+            <h2>반응형 테이블 · Responsive Table</h2>
+            <p class="lead">화면이 좁으면 데이터의 행을 카드형으로 재배치하여 가독성을 유지합니다.</p>
+
+            <div class="columns wide-left">
+              <div class="paper">
+                <div class="section-tag">버전 1.0 · CSS 대체</div>
+                <p><b>data-role="table"</b>은 1.3부터 지원됩니다. 1.0에서는 미디어 쿼리 또는 클래스로 배치를 전환합니다.</p>
+                <div class="code-label">핵심 스타일</div>
+                <pre class="codebox small">@media(max-width:600px){
+  table, tbody, tr, td {display:block;}
+  thead {display:none;}
+  td:before {content:attr(data-label);}
+}</pre>
+                <div class="note">스마트폰에서는 열을 숨기거나 각 행을 세로 카드로 재배치할 수 있습니다.</div>
+              </div>
+              <div class="paper pale-blue">
+                <div class="demo-title">LIVE DEMO · 너비 시뮬레이션</div>
+                <div style="display:flex;gap:10px;margin-bottom:10px"><a href="#" class="btn-mini alt" id="tableWide">넓은
+                    화면</a><a href="#" class="btn-mini" id="tableNarrow">스마트폰</a></div>
+                <div class="table-proxy" id="demoTableProxy">
+                  <table class="table-demo">
+                    <thead>
+                      <tr>
+                        <th>이름</th>
+                        <th>전공</th>
+                        <th>점수</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td data-label="이름">김학생</td>
+                        <td data-label="전공">AI</td>
+                        <td data-label="점수">95</td>
+                      </tr>
+                      <tr>
+                        <td data-label="이름">이학생</td>
+                        <td data-label="전공">SW</td>
+                        <td data-label="점수">88</td>
+                      </tr>
+                      <tr>
+                        <td data-label="이름">박학생</td>
+                        <td data-label="전공">SEC</td>
+                        <td data-label="점수">92</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="small-caption" id="tableLabel">현재: 넓은 화면</div>
+              </div>
+            </div>
+          </section>
+          <section class="slide " id="slide12" data-index="11" aria-label="그리드 레이아웃 · Grid Layout">
+            <div class="slide-head">
+              <div class="micro">11 · UI ⑤</div>
+              <div class="slide-count">12 / 13</div>
+            </div>
+            <h2>그리드 레이아웃 · Grid Layout</h2>
+            <p class="lead">ui-grid-a부터 ui-grid-d까지 2~5개의 가로 열을 균등하게 배치합니다.</p>
+
+            <div class="columns">
+              <div class="paper">
+                <div class="section-tag">그리드 클래스</div>
+                <table class="matrix" style="font-size:18px">
+                  <thead>
+                    <tr>
+                      <th>컨테이너</th>
+                      <th>열 수</th>
+                      <th>블록 클래스</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>ui-grid-a</td>
+                      <td>2단</td>
+                      <td>a~b</td>
+                    </tr>
+                    <tr>
+                      <td>ui-grid-b</td>
+                      <td>3단</td>
+                      <td>a~c</td>
+                    </tr>
+                    <tr>
+                      <td>ui-grid-c</td>
+                      <td>4단</td>
+                      <td>a~d</td>
+                    </tr>
+                    <tr>
+                      <td>ui-grid-d</td>
+                      <td>5단</td>
+                      <td>a~e</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="code-label">2단 그리드</div>
+                <pre class="codebox small">&lt;div class=&quot;ui-grid-a&quot;&gt;
+  &lt;div class=&quot;ui-block-a&quot;&gt;A&lt;/div&gt;
+  &lt;div class=&quot;ui-block-b&quot;&gt;B&lt;/div&gt;
+&lt;/div&gt;</pre>
+              </div>
+              <div class="paper pale-blue">
+                <div class="demo-title">LIVE DEMO · 열 수를 바꿔 보세요</div>
+                <div style="display:flex;gap:8px"><a href="#" class="btn-mini grid-btn active" data-count="2">2단</a><a
+                    href="#" class="btn-mini alt grid-btn" data-count="3">3단</a><a href="#"
+                    class="btn-mini alt grid-btn" data-count="4">4단</a><a href="#" class="btn-mini alt grid-btn"
+                    data-count="5">5단</a></div>
+                <div class="live-grids">
+                  <div id="grid-2" class="ui-grid-a show">
+                    <div class="ui-block-a">
+                      <div class="grid-cell">A</div>
+                    </div>
+                    <div class="ui-block-b">
+                      <div class="grid-cell">B</div>
+                    </div>
+                  </div>
+                  <div id="grid-3" class="ui-grid-b ">
+                    <div class="ui-block-a">
+                      <div class="grid-cell">A</div>
+                    </div>
+                    <div class="ui-block-b">
+                      <div class="grid-cell">B</div>
+                    </div>
+                    <div class="ui-block-c">
+                      <div class="grid-cell">C</div>
+                    </div>
+                  </div>
+                  <div id="grid-4" class="ui-grid-c ">
+                    <div class="ui-block-a">
+                      <div class="grid-cell">A</div>
+                    </div>
+                    <div class="ui-block-b">
+                      <div class="grid-cell">B</div>
+                    </div>
+                    <div class="ui-block-c">
+                      <div class="grid-cell">C</div>
+                    </div>
+                    <div class="ui-block-d">
+                      <div class="grid-cell">D</div>
+                    </div>
+                  </div>
+                  <div id="grid-5" class="ui-grid-d ">
+                    <div class="ui-block-a">
+                      <div class="grid-cell">A</div>
+                    </div>
+                    <div class="ui-block-b">
+                      <div class="grid-cell">B</div>
+                    </div>
+                    <div class="ui-block-c">
+                      <div class="grid-cell">C</div>
+                    </div>
+                    <div class="ui-block-d">
+                      <div class="grid-cell">D</div>
+                    </div>
+                    <div class="ui-block-e">
+                      <div class="grid-cell">E</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="demo-result" id="gridCount">2단 레이아웃 / 각 열 50%</div>
+                <div class="small-caption">그리드는 기본적으로 배경색을 만들지 않습니다. 셀 디자인은 CSS로 적용합니다.</div>
+              </div>
+            </div>
+          </section>
+          <section class="slide cream-slide" id="slide13" data-index="12" aria-label="jQuery Mobile 1.0 호환성 점검">
+            <div class="slide-head">
+              <div class="micro">12 · 버전별 지원</div>
+              <div class="slide-count">13 / 13</div>
+            </div>
+            <h2>jQuery Mobile 1.0 호환성 점검</h2>
+            <p class="lead">모든 data-role 속성이 모든 버전에서 지원되는 것은 아닙니다.</p>
+
+            <div class="columns wide-left">
+              <div class="paper">
+                <div class="section-tag">지원 여부 · 표 1</div>
+                <table class="matrix">
+                  <thead>
+                    <tr>
+                      <th>구성 요소</th>
+                      <th>v1.0</th>
+                      <th>이번 실습</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Radio · Checkbox · Select</td>
+                      <td class="yes">지원</td>
+                      <td>기본 위젯</td>
+                    </tr>
+                    <tr>
+                      <td>Flip · Range · Text / Search</td>
+                      <td class="yes">지원</td>
+                      <td>기본 위젯</td>
+                    </tr>
+                    <tr>
+                      <td>Collapsible · Grid</td>
+                      <td class="yes">지원</td>
+                      <td>기본 위젯</td>
+                    </tr>
+                    <tr>
+                      <td>Popup (1.2부터)</td>
+                      <td class="no">미지원</td>
+                      <td>fadeIn/Out</td>
+                    </tr>
+                    <tr>
+                      <td>Panel (1.3부터)</td>
+                      <td class="no">미지원</td>
+                      <td>CSS 슬라이드</td>
+                    </tr>
+                    <tr>
+                      <td>Table (1.3부터)</td>
+                      <td class="no">미지원</td>
+                      <td>CSS 반응형</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="paper pale-cream">
+                <div class="section-tag">실습에서 꼭 기억할 점</div>
+                <h3>코드를 복사하기 전에 버전을 확인하세요.</h3>
+                <ul>
+                  <li>1.0에서 <span class="inline-code">data-role="panel"</span>만 입력해도 패널은 생성되지 않습니다.</li>
+                  <li>이벤트 바인딩은 jQuery 1.6.4의 <span class="inline-code">.bind()</span>를 사용합니다.</li>
+                  <li>실습용 CDN 주소는 HTTPS로 연결합니다.</li>
+                </ul>
+                <div class="note amber">현재 jQuery Mobile 1.0은 오래된 교육용 버전으로, 신규 상용 서비스의 기술 선택과 구분해야 합니다.</div>
+              </div>
+            </div>
+          </section>              
+        </div>
+      </div>
+      <div class="controlbar" id="controlBar"><span class="leftnote">16:9 SLIDE</span>
+        <div class="progress"><span id="progressFill"></span></div><span id="slideCounter">1 / 13</span>
+        <div class="controls"><button id="prevSlide" type="button">← 이전</button><button id="nextSlide" type="button">다음
+            →</button><button id="fullscreenSlide" type="button">⛶ 전체화면</button><button id="printSlide" type="button">▤
+            인쇄</button></div>
+      </div>
+    </main>
+  </div>
+  <script>
+    (function ($) {
+      $(function () {
+        var current = 0, total = 13;
+        function fit() {
+          var work = document.getElementById('workspace');
+          var bar = document.getElementById('controlBar');
+          var maxW = Math.max(280, work.clientWidth - 24);
+          var maxH = Math.max(180, work.clientHeight - (bar.offsetHeight || 45) - 30);
+          var sc = Math.min(maxW / 1280, maxH / 720, 1.20);
+          var frame = document.getElementById('stageFrame');
+          frame.style.width = (1280 * sc) + 'px'; frame.style.height = (720 * sc) + 'px';
+          document.getElementById('deck').style.transform = 'scale(' + sc + ')';
+        }
+        function show(n) {
+          if (n < 0 || n >= total) return;
+          current = n;
+          $('.slide').removeClass('active').attr('aria-hidden', 'true');
+          $('#slide' + (n + 1)).addClass('active').attr('aria-hidden', 'false');
+          $('.jump').removeClass('active');
+          $('.jump[data-jump="' + n + '"]').addClass('active');
+          $('#slideCounter').text((n + 1) + ' / ' + total);
+          $('#progressFill').css('width', (((n + 1) / total) * 100) + '%');
+          $('#prevSlide').prop('disabled', n === 0); $('#nextSlide').prop('disabled', n === total - 1);
+          var active = document.querySelector('.jump.active'); if (active && active.scrollIntoView) active.scrollIntoView({ block: 'nearest' });
+        }
+        $('.jump').bind('click', function (e) { e.preventDefault(); show(parseInt($(this).attr('data-jump'), 10)); });
+        $('#prevSlide').bind('click', function () { show(current - 1); });
+        $('#nextSlide').bind('click', function () { show(current + 1); });
+        $('#printSlide').bind('click', function () { window.print(); });
+        $('#fullscreenSlide').bind('click', function () {
+          var el = document.getElementById('lecturePage');
+          if (!document.fullscreenElement && el.requestFullscreen) el.requestFullscreen();
+          else if (document.exitFullscreen) document.exitFullscreen();
+        });
+        $(document).bind('keydown', function (e) {
+          var tag = (e.target && e.target.tagName || '').toLowerCase();
+          if (e.which === 27) { hidePopup(); closePanel(); return; }
+          if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+          if (e.which === 39 || e.which === 34) { e.preventDefault(); show(current + 1); }
+          if (e.which === 37 || e.which === 33) { e.preventDefault(); show(current - 1); }
+        });
+        if (window.addEventListener) window.addEventListener('resize', fit);
+        if (document.addEventListener) document.addEventListener('fullscreenchange', fit);
+        fit(); show(0);
+        // 표준 폼 예제: jQuery 1.6.4에는 .on()이 없으므로 .bind() 사용
+        function updateChoices() {
+          var type = $('input[name="courseDemo"]:checked').val() || '미선택', interests = [];
+          $('.interestDemo:checked').each(function () { interests.push($(this).val()); });
+          $('#choiceResult').text(type + ' · ' + (interests.join(', ') || '관심 분야 미선택'));
+        }
+        $('input[name="courseDemo"],.interestDemo').bind('change', updateChoices); updateChoices();
+        $('#majorSelect').bind('change', function () { $('#selectResult').text('선택 코드: ' + $(this).val()); });
+        $('#demoFlip').bind('change', function () { $('#flipResult').text('강의 알림: ' + $(this).val()); });
+        $('#demoRange').bind('change input', function () { var n = $(this).val(); $('#rangeValue').text(n); $('#rangeResult').text('현재 설정: ' + n + '%'); });
+        $('#topicSearch').bind('change input keyup', function () {
+          var q = $.trim($(this).val()).toLowerCase(); var words = ['HTML5', 'CSS3', 'JavaScript', 'jQuery Mobile'];
+          var found = []; for (var i = 0; i < words.length; i++) { if (!q || words[i].toLowerCase().indexOf(q) >= 0) found.push(words[i]); }
+          $('#topicResults').text(found.join(' · ') || '검색 결과가 없습니다.');
+        });
+        // Panel 1.0 대체 구현
+        function openPanel() { $('#demoSidePanel').addClass('open'); $('#panelVeil').show(); }
+        function closePanel() { $('#demoSidePanel').removeClass('open'); $('#panelVeil').hide(); }
+        $('#panelOpen').bind('click', function (e) { e.preventDefault(); openPanel(); });
+        $('#panelClose,#panelVeil').bind('click', function (e) { e.preventDefault(); closePanel(); });
+        var tStart = null;
+        $('#panelPhone').bind('touchstart', function (e) { var touches = e.originalEvent.touches; if (touches && touches.length === 1) tStart = touches[0].clientX; });
+        $('#panelPhone').bind('touchend', function (e) {
+          if (tStart === null) return; var changed = e.originalEvent.changedTouches; if (!changed || !changed.length) return;
+          var d = changed[0].clientX - tStart; tStart = null;
+          if (d > 55) openPanel(); else if (d < -55) closePanel();
+        });
+        // Popup 1.0 대체 구현
+        function showPopup() { $('#demoPopupLayer').fadeIn(160).addClass('show'); }
+        function hidePopup() { $('#demoPopupLayer').fadeOut(130).removeClass('show'); }
+        $('#popupOpen').bind('click', function (e) { e.preventDefault(); showPopup(); });
+        $('#popupClose').bind('click', function (e) { e.preventDefault(); hidePopup(); });
+        $('#demoPopupLayer').bind('click', function (e) { if (e.target === this) hidePopup(); });
+        // 화면 전환 학습: 동일 데이터의 넓은 화면/모바일 화면 재배치
+        $('#tableWide').bind('click', function (e) { e.preventDefault(); $('#demoTableProxy').removeClass('narrow'); $('#tableLabel').text('현재: 넓은 화면'); });
+        $('#tableNarrow').bind('click', function (e) { e.preventDefault(); $('#demoTableProxy').addClass('narrow'); $('#tableLabel').text('현재: 스마트폰 카드형'); });
+        $('.grid-btn').bind('click', function (e) {
+          e.preventDefault(); var n = parseInt($(this).attr('data-count'), 10);
+          $('.grid-btn').removeClass('active').addClass('alt'); $(this).addClass('active').removeClass('alt');
+          $('.live-grids>div').removeClass('show'); $('#grid-' + n).addClass('show');
+          $('#gridCount').text(n + '단 레이아웃 / 각 열 ' + (100 / n).toFixed(n === 3 ? 1 : 0) + '%');
+        });
+        $('#showSummary').bind('click', function (e) {
+          e.preventDefault(); var name = $.trim($('#personName').val()) || '미입력';
+          var major = $('#majorSelect').val() || 'AI'; var flip = $('#demoFlip').val() || 'OFF'; var volume = $('#demoRange').val() || '50';
+          $('#summaryName').text(name); $('#summaryMajor').text(major); $('#summaryFlip').text(flip); $('#summaryVol').text(volume + '%');
+          $('#summaryFoot').text('값을 모아 출력했습니다. 개인정보는 전송하거나 저장하지 않습니다.');
+        });
+        $('.quizToggle').bind('click', function (e) { e.preventDefault(); var id = $(this).attr('data-answer'); $('#' + id).toggleClass('visible'); $(this).text($('#' + id).hasClass('visible') ? '정답 접기' : '정답 보기'); });
+      });
+    })(jQuery);
+  </script>
+</body>
+
+</html>

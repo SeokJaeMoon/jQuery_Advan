@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>STEP 08 | 슬라이드 패널 | jQuery Mobile 1.0</title>
+  <!-- 업로드 원본과 동일한 jQuery 1.6.4 + jQuery Mobile 1.0 -->
+  <link rel="stylesheet" href="https://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css">
+  <script src="https://code.jquery.com/jquery-1.6.4.min.js"></script>
+  <script src="https://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
+  <!-- 원본이 참조한 10_css.css 파일이 없으므로 각 실습 파일에 필수 CSS 포함 -->
+  <style>
+    /* [STEP 01] 기본 스타일 (원본 통합 실습 디자인 유지) */
+    * { box-sizing: border-box; }
+    body, .ui-body-c { font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
+    .ui-header .ui-title { margin: 0.65em 54px; font-size: 16px; }
+    .hero { background:#e9f4ff; border:1px solid #cee5fb; border-radius:12px; padding:16px; margin-bottom:20px; }
+    .hero h2 { margin:2px 0 8px; color:#173b64; font-size:19px; }
+    .hero p { margin:0; color:#3b526d; font-size:14px; line-height:1.65; }
+    .section { margin:15px 0 24px; padding:15px 15px 18px; border:1px solid #dce4ea; border-radius:12px; background:white; box-shadow:0 2px 6px rgba(23,54,81,.04); }
+    .section h3 { font-size:18px; margin:0 0 8px; color:#143c67; }
+    .section h4 { margin:16px 0 8px; font-size:15px; color:#214766; }
+    .desc { font-size:13px; color:#566476; line-height:1.6; margin:4px 0 13px; }
+    .number { display:inline-block; background:#2069aa; color:white; border-radius:5px; padding:3px 8px; margin-right:6px; font-size:13px; vertical-align:middle; }
+    .hint { padding:10px 12px; border-left:3px solid #2f8fbf; background:#edf8ff; color:#29526b; font-size:13px; line-height:1.6; border-radius:3px; }
+    .lesson-tip { background:#fffaf0; border:1px solid #eddcbd; padding:11px 13px; border-radius:9px; margin:16px 0 14px; color:#66512f; font-size:14px; line-height:1.65; }
+    .lesson-tip strong { color:#68410f; }
+    .stage-nav { display:flex; gap:8px; justify-content:space-between; margin-top:18px; flex-wrap:wrap; }
+    .stage-nav a { display:inline-block; color:#185d91; padding:8px 10px; border:1px solid #d2e2f0; border-radius:7px; text-decoration:none; background:#f4f9fc; font-size:13px; font-weight:600; }
+
+    /* [STEP 07] 수집한 입력 값 표시 */
+    .result { background:#f5f8fc; border:1px solid #d6e2ec; padding:11px 13px; border-radius:8px; white-space:pre-line; font-size:14px; min-height:45px; }
+
+    /* [STEP 08] jQuery Mobile 1.0에 panel 위젯이 없으므로 직접 구현 */
+    #panelShade { display:none; position:fixed; inset:0; background:rgba(15,30,49,.46); z-index:1100; }
+    #sidePanel { position:fixed; left:-290px; top:0; height:100%; height:100vh; width:260px; padding:18px; background:#f8fbff; z-index:1101; border-right:1px solid #bdd5e9; box-shadow:4px 0 20px rgba(0,0,0,.18); overflow-y:auto; }
+    #sidePanel h3 { color:#173d68; margin-top:10px; }
+    #sidePanel .panel-link { display:block; padding:12px; margin-bottom:8px; border:1px solid #d2e2f0; border-radius:7px; background:#e8f2fc; color:#1d4c72; text-decoration:none; font-weight:bold; }
+    #sidePanel .panel-link:focus { outline:2px solid #247dbd; }
+  </style>
+</head>
+<body>
+  <div data-role="page" id="demo" data-theme="c">
+    <div data-role="header" data-theme="b">
+      <h1>jQuery Mobile 1.0 실습 · STEP 08</h1>
+    </div>
+
+    <!-- [STEP 08] 별도 플러그인이 아닌 CSS + 기본 jQuery로 패널 구현 -->
+    <div id="panelShade" aria-hidden="true"></div>
+    <nav id="sidePanel" aria-label="실습 사이드 메뉴">
+      <h3>실습 목차</h3>
+        <a class="panel-link" href="#forms">1. 폼 요소 5종</a>
+      <a href="#" id="btnPanelClose" data-role="button" data-theme="b">메뉴 닫기</a>
+      <p class="desc">화면을 오른쪽으로 스와이프하면 메뉴가 열리고, 메뉴에서 왼쪽으로 스와이프하면 닫힙니다.</p>
+    </nav>
+    <div data-role="content" id="mainContent">
+      <div class="hero">
+        <h2>STEP 08. 슬라이드 패널</h2>
+        <p>원본 HTML을 단계별로 확장하며 테스트하는 실습입니다. 현재 8/12 단계입니다.</p>
+      </div>
+      <div class="lesson-tip"><strong>실습 테스트:</strong> 메뉴 열기·닫기, 바깥 영역 탭, 오른쪽/왼쪽 스와이프를 테스트한다.</div>
+      <a href="#" id="btnPanelOpen" data-role="button" data-theme="b" data-icon="grid" aria-expanded="false">사이드 메뉴 열기</a>
+
+      <section class="section" id="forms">
+        <h3><span class="number">01</span>폼 요소 5종</h3>
+        <p class="desc">선택과 입력을 실습한 후, [입력 결과 확인] 버튼을 누르세요.</p>
+        <form id="studentForm" action="#" method="get">
+                  <!-- [STEP 02] 라디오 버튼과 체크박스 -->
+                  <h4>① 라디오 버튼과 체크박스</h4>
+                  <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                      <legend>수강 형태(1개만 선택)</legend>
+                      <input type="radio" name="course" id="courseOnline" value="온라인" checked>
+                      <label for="courseOnline">온라인</label>
+                      <input type="radio" name="course" id="courseOffline" value="오프라인">
+                      <label for="courseOffline">오프라인</label>
+                    </fieldset>
+                  </div>
+                  <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                      <legend>관심 분야(복수 선택)</legend>
+                      <input type="checkbox" name="interest" id="interestAI" value="인공지능">
+                      <label for="interestAI">인공지능</label>
+                      <input type="checkbox" name="interest" id="interestWeb" value="웹 개발">
+                      <label for="interestWeb">웹 개발</label>
+                      <input type="checkbox" name="interest" id="interestSec" value="정보보호">
+                      <label for="interestSec">정보보호</label>
+                    </fieldset>
+                  </div>
+
+                  <!-- [STEP 03] 선택 메뉴(Select) -->
+                  <h4>② 선택 메뉴(Select)</h4>
+                  <div data-role="fieldcontain">
+                    <label for="major">전공 선택</label>
+                    <select name="major" id="major">
+                      <option value="인공지능학과">인공지능학과</option>
+                      <option value="소프트웨어학과">소프트웨어학과</option>
+                      <option value="정보보호학과">정보보호학과</option>
+                    </select>
+                  </div>
+
+                  <!-- [STEP 04] 플립 스위치 -->
+                  <h4>③ 플립 스위치(Flip Switch)</h4>
+                  <div data-role="fieldcontain">
+                    <label for="wifi">알림 설정</label>
+                    <select name="wifi" id="wifi" data-role="slider">
+                      <option value="OFF">OFF</option>
+                      <option value="ON">ON</option>
+                    </select>
+                  </div>
+
+                  <!-- [STEP 05] 숫자 슬라이더 -->
+                  <h4>④ 숫자 슬라이더(Slider)</h4>
+                  <div data-role="fieldcontain">
+                    <label for="volume">볼륨: <strong id="volumeText">50</strong></label>
+                    <input type="range" id="volume" name="volume" min="0" max="100" value="50">
+                  </div>
+
+                  <!-- [STEP 06] 텍스트·검색 폼 -->
+                  <h4>⑤ 텍스트와 검색 폼</h4>
+                  <div data-role="fieldcontain">
+                    <label for="studentName">이름</label>
+                    <input type="text" id="studentName" name="studentName" placeholder="이름 입력">
+                  </div>
+                  <div data-role="fieldcontain">
+                    <label for="searchWord">검색어</label>
+                    <input type="search" id="searchWord" name="searchWord" placeholder="예: jQuery Mobile">
+                  </div>
+
+                  <!-- [STEP 07] 폼 입력 결과 확인 -->
+                  <!-- [STEP 07] 기존 폼에서 읽은 값을 출력 -->
+                  <a href="#" id="btnResult" data-role="button" data-theme="b" data-icon="check">입력 결과 확인</a>
+                  <div class="result" id="formResult" role="status" aria-live="polite">아직 입력 결과가 없습니다.</div>
+        </form>
+      </section>
+
+      <div class="stage-nav">
+        <a data-ajax="false" href="07_form_result.html">◀ 이전 단계</a>
+        <a data-ajax="false" href="index.html">전체 실습 목차</a>
+        <a data-ajax="false" href="09_collapsible.html">다음 단계 ▶</a>
+      </div>
+      <p class="hint"><strong>버전 안내:</strong> jQuery 1.6.4 / jQuery Mobile 1.0을 사용합니다. 패널·팝업·반응형 테이블은 CSS와 jQuery로 대체합니다. 라이브러리 로드에는 인터넷이 필요합니다.</p>
+    </div>
+    <div data-role="footer" data-theme="b"><h4>모바일 웹앱 프로그래밍 · 단계별 실습</h4></div>
+
+  </div>
+
+  <script>
+    // jQuery 1.6.4에 맞춰 .on() 대신 .bind() 사용
+    $(document).ready(function () {
+      // [STEP 05] range 값을 표시 (jQuery 1.6.4의 .bind 사용)
+      $("#volume").bind("change keyup", function () {
+        $("#volumeText").text($(this).val());
+      });
+
+      // [STEP 07] 폼에서 선택하거나 입력한 값을 한 번에 읽기
+      $("#btnResult").bind("click", function (e) {
+        e.preventDefault();
+        var interests = [];
+        $("input[name='interest']:checked").each(function () {
+          interests.push($(this).val());
+        });
+        var output = "수강 형태: " + ($("input[name='course']:checked").val() || "미선택") + "\n" +
+                     "관심 분야: " + (interests.length ? interests.join(", ") : "미선택") + "\n" +
+                     "선택 전공: " + $("#major").val() + "\n" +
+                     "알림 설정: " + $("#wifi").val() + "\n" +
+                     "볼륨: " + $("#volume").val() + "\n" +
+                     "이름: " + ($("#studentName").val() || "미입력") + "\n" +
+                     "검색어: " + ($("#searchWord").val() || "미입력");
+        $("#formResult").text(output);
+      });
+      $("#studentForm").bind("submit", function (e) {
+        e.preventDefault();
+        $("#btnResult").trigger("click");
+      });
+
+      // [STEP 08] 패널 열기 / 닫기 / 목차 이동 / 스와이프
+      function openPanel() {
+        $("#panelShade").show();
+        $("#sidePanel").stop(true, true).animate({ left: "0px" }, 240);
+        $("#btnPanelOpen").attr("aria-expanded", "true");
+      }
+      function closePanel() {
+        $("#sidePanel").stop(true, true).animate({ left: "-290px" }, 240, function () {
+          $("#panelShade").hide();
+        });
+        $("#btnPanelOpen").attr("aria-expanded", "false");
+      }
+      $("#btnPanelOpen").bind("click", function (e) {
+        e.preventDefault();
+        openPanel();
+      });
+      $("#btnPanelClose, #panelShade").bind("click", function (e) {
+        e.preventDefault();
+        closePanel();
+      });
+      $("#sidePanel .panel-link").bind("click", function (e) {
+        e.preventDefault();
+        var target = $(this).attr("href");
+        closePanel();
+        var section = $(target);
+        if (section.length) {
+          $("html, body").animate({ scrollTop: section.offset().top }, 350);
+        }
+      });
+      $("#mainContent").bind("swiperight", function (e) {
+        // 숫자 슬라이더와 입력 요소의 드래그 동작은 메뉴 제스처로 취급하지 않음
+        if ($(e.target).closest(".ui-slider, input, select").length) return;
+        openPanel();
+      });
+      $("#sidePanel").bind("swipeleft", function () { closePanel(); });
+    });
+  </script>
+</body>
+</html>

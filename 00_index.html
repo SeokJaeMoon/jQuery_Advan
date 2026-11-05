@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>jQuery Mobile 1.0 단계별 실습 안내</title>
+<style>
+*{box-sizing:border-box} body{font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif;margin:0;color:#19354f;background:#f4f8fc;line-height:1.65}
+header{padding:42px 20px 36px;background:linear-gradient(120deg,#245c8c,#357cab);color:white}
+main{max-width:1050px;margin:0 auto;padding:18px 20px 70px}
+h1{max-width:1010px;margin:0 auto;font-size:clamp(23px,3.3vw,38px)}.sub{max-width:1010px;margin:12px auto 0;font-size:16px;opacity:.94}
+.notes{padding:17px;background:white;border:1px solid #d5e2f0;border-radius:13px;margin:24px 0}.notes strong{color:#0f578d}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:15px}
+.card{padding:18px;background:white;border:1px solid #d7e4ee;border-radius:12px;box-shadow:0 2px 8px rgba(18,47,68,.045);min-height:252px;display:flex;flex-direction:column}
+.count{font-weight:800;letter-spacing:.05em;color:#266ca1;font-size:12px;display:flex;justify-content:space-between}.count span{color:#7590a5}
+h3{margin:7px 0 8px;font-size:19px} p{margin:5px 0 12px;font-size:14px}code{background:#e8f1f9;border-radius:4px;padding:2px 4px;overflow-wrap:anywhere}
+.card a{margin-top:auto;display:block;text-align:center;text-decoration:none;border-radius:8px;background:#2172a8;color:white;font-weight:700;padding:11px}
+a:hover{filter:brightness(.94)} footer{text-align:center;font-size:13px;padding:25px;color:#526b7e}
+</style>
+</head>
+<body>
+<header><h1>jQuery Mobile 1.0 · 12단계 코드 실습</h1><p class="sub">업로드한 통합 HTML 코드를 기초 → 폼 → 데이터 출력 → UI 컴포넌트 순서로 분리한 독립 실행 실습 자료</p></header>
+<main>
+<section class="notes"><strong>진행 방법:</strong> STEP 01부터 12까지 순서대로 실행하세요. 다음 파일은 앞 단계의 코드에 기능이 하나씩 추가된 버전이며, 각 파일 상단의 노란 박스에서 테스트 방법을 안내합니다.<br>
+<strong>기본 라이브러리:</strong> jQuery 1.6.4 + jQuery Mobile 1.0 (원본 유지) · 각 HTML은 CSS를 내부에 포함 · CDN 사용으로 인터넷 연결 필요</section>
+<div class="cards"><article class="card">
+      <div class="count">STEP 01 <span>1/12</span></div>
+      <h3>기본 페이지 구조</h3>
+      <p><strong>핵심 코드:</strong> <code>data-role=&quot;page&quot;, data-role=&quot;header&quot;, data-role=&quot;content&quot;, data-role=&quot;footer&quot;</code></p>
+      <p><strong>실습 테스트:</strong> header · content · footer 영역이 표시되는지 확인한다.</p>
+      <a href="01_basic_page.html">이 단계 실행하기 →</a>
+    </article><article class="card">
+      <div class="count">STEP 02 <span>2/12</span></div>
+      <h3>라디오 버튼과 체크박스</h3>
+      <p><strong>핵심 코드:</strong> <code>input type=&quot;radio&quot;, input type=&quot;checkbox&quot;, data-role=&quot;controlgroup&quot;</code></p>
+      <p><strong>실습 테스트:</strong> 수강 형태는 한 가지만, 관심 분야는 여러 개 선택되는지 확인한다.</p>
+      <a href="02_radio_checkbox.html">이 단계 실행하기 →</a>
+    </article><article class="card">
+      <div class="count">STEP 03 <span>3/12</span></div>
+      <h3>선택 메뉴(Select)</h3>
+      <p><strong>핵심 코드:</strong> <code>&lt;select&gt;, &lt;option&gt;</code></p>
+      <p><strong>실습 테스트:</strong> 전공 선택 메뉴에서 다른 항목을 선택해 본다.</p>
+      <a href="03_select_menu.html">이 단계 실행하기 →</a>
+    </article><article class="card">
+      <div class="count">STEP 04 <span>4/12</span></div>
+      <h3>플립 스위치</h3>
+      <p><strong>핵심 코드:</strong> <code>select data-role=&quot;slider&quot;</code></p>
+      <p><strong>실습 테스트:</strong> 알림 설정을 OFF와 ON으로 전환한다.</p>
+      <a href="04_flip_switch.html">이 단계 실행하기 →</a>
+    </article><article class="card">
+      <div class="count">STEP 05 <span>5/12</span></div>
+      <h3>숫자 슬라이더</h3>
+      <p><strong>핵심 코드:</strong> <code>input type=&quot;range&quot;, .bind(&quot;change keyup&quot;, ...)</code></p>
+      <p><strong>실습 테스트:</strong> 볼륨을 움직이면 숫자 표시가 함께 변경되는지 확인한다.</p>
+      <a href="05_range_slider.html">이 단계 실행하기 →</a>
+    </article><article class="card">
+      <div class="count">STEP 06 <span>6/12</span></div>
+      <h3>텍스트·검색 폼</h3>
+      <p><strong>핵심 코드:</strong> <code>input type=&quot;text&quot;, input type=&quot;search&quot;</code></p>
+      <p><strong>실습 테스트:</strong> 이름과 검색어를 입력하고 검색창의 지우기 동작을 확인한다.</p>
+      <a href="06_text_search.html">이 단계 실행하기 →</a>
+    </article><article class="card">
+      <div class="count">STEP 07 <span>7/12</span></div>
+      <h3>폼 입력 결과 확인</h3>
+      <p><strong>핵심 코드:</strong> <code>.val(), :checked, .each(), .text()</code></p>
+      <p><strong>실습 테스트:</strong> 입력 결과 확인 버튼을 눌러 현재 선택·입력 값 7항목을 출력한다.</p>
+      <a href="07_form_result.html">이 단계 실행하기 →</a>
+    </article><article class="card">
+      <div class="count">STEP 08 <span>8/12</span></div>
+      <h3>슬라이드 패널</h3>
+      <p><strong>핵심 코드:</strong> <code>.animate(), swiperight, swipeleft</code></p>
+      <p><strong>실습 테스트:</strong> 메뉴 열기·닫기, 바깥 영역 탭, 오른쪽/왼쪽 스와이프를 테스트한다.</p>
+      <a href="08_slide_panel.html">이 단계 실행하기 →</a>
+    </article><article class="card">
+      <div class="count">STEP 09 <span>9/12</span></div>
+      <h3>접이식 아코디언</h3>
+      <p><strong>핵심 코드:</strong> <code>data-role=&quot;collapsible-set&quot;, data-role=&quot;collapsible&quot;</code></p>
+      <p><strong>실습 테스트:</strong> HTML5/CSS3/jQuery Mobile 항목을 차례대로 펼쳐 본다.</p>
+      <a href="09_collapsible.html">이 단계 실행하기 →</a>
+    </article><article class="card">
+      <div class="count">STEP 10 <span>10/12</span></div>
+      <h3>팝업 대체 구현</h3>
+      <p><strong>핵심 코드:</strong> <code>.fadeIn(), .fadeOut()</code></p>
+      <p><strong>실습 테스트:</strong> 팝업 열기·닫기와 배경 클릭, ESC 키 닫기를 테스트한다.</p>
+      <a href="10_popup.html">이 단계 실행하기 →</a>
+    </article><article class="card">
+      <div class="count">STEP 11 <span>11/12</span></div>
+      <h3>반응형 테이블 대체 구현</h3>
+      <p><strong>핵심 코드:</strong> <code>@media (max-width: 580px), data-label</code></p>
+      <p><strong>실습 테스트:</strong> 브라우저 폭을 580px 이하로 줄여 표가 세로 카드로 바뀌는지 확인한다.</p>
+      <a href="11_responsive_table.html">이 단계 실행하기 →</a>
+    </article><article class="card">
+      <div class="count">STEP 12 <span>12/12</span></div>
+      <h3>2~5단 그리드 / 전체 완성</h3>
+      <p><strong>핵심 코드:</strong> <code>ui-grid-a ~ ui-grid-d, ui-block-a ~ ui-block-e</code></p>
+      <p><strong>실습 테스트:</strong> 2·3·4·5단 그리드를 확인하고 앞 단계 기능이 모두 작동하는지 점검한다.</p>
+      <a href="12_grid_layout.html">이 단계 실행하기 →</a>
+    </article></div>
+</main><footer>모바일 웹앱 프로그래밍 · 단계별 실습 / VS Code · Chrome · Edge</footer>
+</body></html>
